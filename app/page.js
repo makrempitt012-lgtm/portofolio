@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
@@ -10,6 +11,10 @@ import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import SplashScreen from "@/components/SplashScreen";
+
+const Background3D = dynamic(() => import("@/components/Background3D"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +28,8 @@ export default function Home() {
   }, [isLoading]);
 
   return (
-    <main className="bg-slate-950 text-slate-100 min-h-screen px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+    <main className="bg-transparent text-slate-100 min-h-screen px-4 sm:px-6 lg:px-8 overflow-x-hidden relative z-10">
+      <Background3D />
       <AnimatePresence mode="wait">
         {isLoading ? (
           <SplashScreen key="splash" onComplete={() => setIsLoading(false)} />
