@@ -2,220 +2,126 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import {
-  GraduationCap,
-  Code2,
-  Layers,
-  Zap,
-  Target,
-  Cpu,
-  Sparkles,
-} from "lucide-react";
-
-/* ─── Marquee tech list ───────────────────────────────────────── */
-const ticker = [
-  "JavaScript", "TypeScript", "React.js", "Next.js", "Node.js",
-  "Tailwind CSS", "Framer Motion", "Express.js", "MySQL", "MongoDB",
-  "PHP", "Laravel", "Git", "Figma", "Vercel",
-];
-
-/* ─── Core principles ─────────────────────────────────────────── */
-const principles = [
-  {
-    icon: Code2,
-    title: "Clean Code",
-    desc: "Kode yang mudah dibaca, dipelihara, dan dikembangkan tim.",
-    glow: "group-hover:shadow-[0_0_20px_-4px_rgba(99,102,241,0.6)]",
-    iconColor: "text-indigo-400",
-    iconBg: "bg-indigo-500/10 border-indigo-500/20",
-  },
-  {
-    icon: Sparkles,
-    title: "Pixel-Perfect UI",
-    desc: "Antarmuka presisi yang merespons setiap detail desain.",
-    glow: "group-hover:shadow-[0_0_20px_-4px_rgba(168,85,247,0.6)]",
-    iconColor: "text-purple-400",
-    iconBg: "bg-purple-500/10 border-purple-500/20",
-  },
-  {
-    icon: Layers,
-    title: "Scalable Architecture",
-    desc: "Struktur aplikasi yang kokoh dan siap tumbuh bersama bisnis.",
-    glow: "group-hover:shadow-[0_0_20px_-4px_rgba(16,185,129,0.5)]",
-    iconColor: "text-emerald-400",
-    iconBg: "bg-emerald-500/10 border-emerald-500/20",
-  },
-];
-
-/* ─── Metrics ─────────────────────────────────────────────────── */
-const metrics = [
-  { icon: GraduationCap, label: "Status Akademis", value: "Mahasiswa Aktif", sub: "Politeknik Negeri Bengkalis", accent: "text-indigo-400" },
-  { icon: Code2,         label: "Proyek Selesai",  value: "15+",             sub: "Web Projects",              accent: "text-purple-400" },
-  { icon: Cpu,           label: "Tech Stack",      value: "10+",             sub: "Teknologi Dikuasai",         accent: "text-emerald-400" },
-  { icon: Target,        label: "Fokus Bidang",    value: "Full-Stack",      sub: "Web Development",           accent: "text-pink-400"   },
-];
-
-/* ─── Shared tile base ────────────────────────────────────────── */
-const TILE = "backdrop-blur-2xl bg-slate-900/50 border border-slate-800/80 rounded-3xl transition-all duration-300";
+import { ArrowUpRight, MapPin, Compass, Briefcase, GraduationCap, CheckCircle2 } from "lucide-react";
 
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 28 },
+    initial: { opacity: 0, y: 20 },
     animate: isInView ? { opacity: 1, y: 0 } : {},
-    transition: { duration: 0.6, delay },
+    transition: { duration: 0.5, delay },
   });
 
+  const statusItems = [
+    {
+      label: "Current Focus",
+      value: "Next.js & Full-Stack Systems",
+      icon: Compass,
+    },
+    {
+      label: "Education",
+      value: "Teknik Informatika — Politeknik Negeri Bengkalis",
+      icon: GraduationCap,
+    },
+    {
+      label: "Location",
+      value: "Riau, Indonesia",
+      icon: MapPin,
+    },
+    {
+      label: "Role",
+      value: "Full-Stack Web Developer",
+      icon: Briefcase,
+    },
+    {
+      label: "Availability",
+      value: "Open for Projects / Freelance & Hiring",
+      icon: CheckCircle2,
+      highlight: true,
+    },
+  ];
+
   return (
-    <section id="tentang" className="relative py-12 sm:py-20 md:py-28 px-4 sm:px-6">
-      {/* Section Divider */}
-      <div className="section-divider max-w-4xl mx-auto mb-24" />
+    <section id="tentang" className="relative py-20 sm:py-28 px-4 sm:px-6">
+      {/* Subtle Section Divider */}
+      <div className="border-t border-zinc-800/80 max-w-6xl mx-auto mb-20" />
 
       <div className="max-w-6xl mx-auto" ref={ref}>
-
-        {/* ── Header ─────────────────────────────────────────── */}
-        <motion.div {...fadeUp(0)} className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-slate-900/60 border border-slate-800/80 text-xs font-medium text-indigo-400 uppercase tracking-wider mb-4">
-            Tentang Saya
+        {/* Section Header */}
+        <motion.div {...fadeUp(0)} className="mb-14">
+          <span className="text-xs font-mono tracking-widest text-zinc-500 uppercase block mb-3">
+            01 / TENTANG SAYA
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-            Bersemangat Membangun{" "}
-            <span className="gradient-text">Solusi Digital</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-zinc-100">
+            Rekayasa Perangkat Lunak & Solusi Digital
           </h2>
-          <p className="text-xs sm:text-sm md:text-base leading-relaxed text-slate-300 max-w-2xl mx-auto">
-            Developer yang berorientasi pada hasil dengan semangat menciptakan
-            pengalaman digital yang berdampak nyata.
-          </p>
         </motion.div>
 
-        {/* ── Bento Grid ─────────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-
-          {/* ── Tile 1: Bio Utama  (col-span-7) ─────────────── */}
+        {/* 2-Column Editorial Split Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Column (60% / col-span-7): Professional Narrative */}
           <motion.div
             {...fadeUp(0.1)}
-            className={`${TILE} lg:col-span-7 p-4 sm:p-6 lg:p-8 hover:border-indigo-500/40 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.3)]`}
+            className="lg:col-span-7 space-y-6 text-zinc-300 font-normal leading-relaxed text-sm sm:text-base"
           >
-            {/* Glow badge status */}
-            <div className="flex items-center gap-2.5 mb-6">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            <p>
+              Saya adalah seorang Mahasiswa Aktif Teknik Informatika di Politeknik Negeri Bengkalis dengan spesialisasi dalam rekayasa perangkat lunak web modern. Fokus utama saya mencakup pembangunan arsitektur aplikasi web menyeluruh—mengintegrasikan antarmuka pengguna yang terstruktur dan responsif dengan rancangan backend serta manajemen basis data yang andal.
+            </p>
+            <p>
+              Dengan pendekatan kerja berbasis <span className="text-zinc-100 font-medium">problem-solving</span>, saya tidak terikat kaku pada satu ekosistem tertentu. Saya terbiasa menganalisis kebutuhan fungsional sebuah proyek, memilih fondasi teknologi yang paling tepat dan skalabel, serta mengeksekusinya dengan standar penulisan kode yang bersih, mudah dipelihara, dan berkinerja tinggi.
+            </p>
+            <div className="pt-2 flex flex-wrap gap-4 text-xs font-mono text-zinc-400">
+              <span className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800/80">
+                • Scalable Architecture
               </span>
-              <span className="text-xs font-semibold text-emerald-400 uppercase tracking-widest">
-                Aktif & Siap Kolaborasi
+              <span className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800/80">
+                • Clean & Maintainable Code
+              </span>
+              <span className="px-3 py-1.5 rounded-md bg-zinc-900 border border-zinc-800/80">
+                • End-to-End Integration
               </span>
             </div>
-
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-5 leading-snug">
-              Adaptable Full-Stack<br />
-              <span className="gradient-text">Web Developer</span>
-            </h3>
-
-            <p className="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed mb-4">
-              Sebagai seorang Mahasiswa Aktif Teknik Informatika di Politeknik Negeri Bengkalis, saya memiliki minat besar dalam merancang dan membangun solusi digital end-to-end yang memadukan <span className="text-indigo-400 font-medium">Pengalaman Pengguna (UX)</span> interaktif dengan performa optimal.
-            </p>
-            <p className="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed">
-              Berperan sebagai Full-Stack Developer, saya adalah individu yang sangat adaptif. Alih-alih hanya berpegang pada satu bahasa atau framework spesifik, saya memiliki fleksibilitas untuk mempelajari dan menerapkan berbagai teknologi web modern secara efisien, menciptakan arsitektur perangkat lunak yang elegan, skalabel, dan relevan dengan kebutuhan proyek Anda.
-            </p>
           </motion.div>
 
-          {/* ── Tile 2: Interactive Metrics  (col-span-5) ────── */}
+          {/* Right Column (40% / col-span-5): Minimalist Status Card */}
           <motion.div
             {...fadeUp(0.2)}
-            className={`${TILE} lg:col-span-5 p-4 sm:p-6 lg:p-8 hover:border-purple-500/30`}
+            className="lg:col-span-5 bg-zinc-900/50 border border-zinc-800/80 rounded-2xl p-6 sm:p-7 hover:border-zinc-700/60 transition-colors"
           >
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-5">
-              Snapshot
-            </p>
-            <div className="grid grid-cols-2 gap-3 h-[calc(100%-36px)]">
-              {metrics.map((m, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.4, delay: 0.25 + i * 0.08 }}
-                  className="group flex flex-col gap-1.5 p-4 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:border-slate-600/60 transition-all duration-300"
-                >
-                  <m.icon size={16} className={`${m.accent} mb-1`} />
-                  <span className={`text-xl font-bold ${m.accent}`}>{m.value}</span>
-                  <span className="text-xs font-semibold text-white">{m.label}</span>
-                  <span className="text-[10px] text-slate-500">{m.sub}</span>
-                </motion.div>
+            {/* Live Indicator */}
+            <div className="flex items-center justify-between pb-5 border-b border-zinc-800/80 mb-5">
+              <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">
+                STATUS & OVERVIEW
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="text-xs font-mono text-emerald-400 font-medium">Available</span>
+              </div>
+            </div>
+
+            {/* Key-Value Details */}
+            <div className="space-y-4">
+              {statusItems.map((item, idx) => (
+                <div key={idx} className="flex flex-col gap-1">
+                  <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">
+                    {item.label}
+                  </span>
+                  <span
+                    className={`text-xs sm:text-sm font-medium ${
+                      item.highlight ? "text-emerald-400" : "text-zinc-200"
+                    }`}
+                  >
+                    {item.value}
+                  </span>
+                </div>
               ))}
             </div>
           </motion.div>
-
-          {/* ── Tile 3: Core Principles  (col-span-7) ─────────── */}
-          <motion.div
-            {...fadeUp(0.3)}
-            className={`${TILE} lg:col-span-7 p-4 sm:p-6 lg:p-8 hover:border-slate-700/80`}
-          >
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-6">
-              Prinsip Kerja Utama
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {principles.map((p, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.35 + i * 0.1 }}
-                  className={`group flex flex-col gap-3 p-5 rounded-2xl bg-slate-800/30 border border-slate-700/40 hover:border-slate-600/60 transition-all duration-300 ${p.glow}`}
-                >
-                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${p.iconBg}`}>
-                    <p.icon size={18} className={p.iconColor} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-white mb-1">{p.title}</p>
-                    <p className="text-xs text-slate-300 leading-relaxed">{p.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ── Tile 4: Tech Ticker  (col-span-5) ─────────────── */}
-          <motion.div
-            {...fadeUp(0.4)}
-            className={`${TILE} lg:col-span-5 p-4 sm:p-6 lg:p-8 overflow-hidden hover:border-emerald-500/30`}
-          >
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-5">
-              Tech Favourites
-            </p>
-            {/* Marquee row 1 */}
-            <div className="relative overflow-hidden mb-3">
-              <div className="flex gap-3 animate-[marquee_22s_linear_infinite] whitespace-nowrap w-max">
-                {[...ticker, ...ticker].map((t, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-300 shrink-0"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-            {/* Marquee row 2 (reverse) */}
-            <div className="relative overflow-hidden">
-              <div className="flex gap-3 animate-[marquee_28s_linear_infinite_reverse] whitespace-nowrap w-max">
-                {[...ticker.slice(5), ...ticker, ...ticker.slice(0, 5)].map((t, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs font-semibold text-purple-300 shrink-0"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <p className="text-[10px] text-slate-600 mt-4 italic">
-              * Daftar teknologi yang aktif dipelajari &amp; digunakan.
-            </p>
-          </motion.div>
-
         </div>
       </div>
     </section>
