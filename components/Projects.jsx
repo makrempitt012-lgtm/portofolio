@@ -51,6 +51,17 @@ const projects = [
     accentGlow: "hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.25)]",
     tagColor: "bg-emerald-500/10 border-emerald-500/20 text-emerald-300",
   },
+  {
+    title: "BAKERY WORDPRESS",
+    category: "E-Commerce / Catalog",
+    tag: "Artisan Bakery",
+    description:
+      "Website profil dan katalog digital Artisan Bakery yang menyajikan ragam pilihan roti artisan, croissant, dan sourdough segar. Dilengkapi filter produk interaktif, sistem pemesanan online, serta integrasi WhatsApp.",
+    techStack: ["WordPress", "Next.js", "Tailwind CSS", "WhatsApp API"],
+    liveUrl: "https://bakery-puce-kappa.vercel.app/",
+    accentGlow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.3)]",
+    tagColor: "bg-orange-500/10 border-orange-500/20 text-orange-300",
+  },
 ];
 
 export default function Projects() {
