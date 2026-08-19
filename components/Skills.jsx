@@ -9,7 +9,7 @@ import {
   SiNodedotjs, SiExpress, SiPostgresql, SiMongodb,
   SiGithub, SiFigma, SiPostman, SiDocker, SiVercel,
   SiJsonwebtokens, SiLaravel, SiMysql, SiFirebase,
-  SiNpm, SiLinux,
+  SiNpm, SiLinux, SiWordpress,
 } from "react-icons/si";
 
 /* ─── Data ────────────────────────────────────────────────────── */
@@ -33,6 +33,7 @@ const backend = [
   { name: "Node.js",    icon: SiNodedotjs,      accent: "hover:border-emerald-400/50 hover:text-emerald-300 hover:shadow-[0_0_14px_-3px_rgba(52,211,153,0.4)]" },
   { name: "Express.js", icon: SiExpress,         accent: "hover:border-slate-300/50 hover:text-white" },
   { name: "Laravel",    icon: SiLaravel,          accent: "hover:border-red-400/50 hover:text-red-300 hover:shadow-[0_0_14px_-3px_rgba(248,113,113,0.4)]" },
+  { name: "WordPress",  icon: SiWordpress,        accent: "hover:border-sky-400/50 hover:text-sky-300 hover:shadow-[0_0_14px_-3px_rgba(56,189,248,0.4)]" },
   { name: "MySQL",      icon: SiMysql,            accent: "hover:border-sky-400/50 hover:text-sky-300 hover:shadow-[0_0_14px_-3px_rgba(56,189,248,0.4)]" },
   { name: "PostgreSQL", icon: SiPostgresql,       accent: "hover:border-blue-400/50 hover:text-blue-300" },
   { name: "MongoDB",    icon: SiMongodb,          accent: "hover:border-emerald-400/50 hover:text-emerald-300" },
