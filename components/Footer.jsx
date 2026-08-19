@@ -22,12 +22,20 @@ const socialLinks = [
 
 export default function Footer() {
   const handleFooterScroll = (e, targetId) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const element = document.getElementById(targetId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.hash = targetId;
+      if (targetId === "hero") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const navOffset = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: "smooth",
+        });
+      }
     }
   };
 

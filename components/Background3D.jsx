@@ -65,8 +65,13 @@ function ParticleGroup({ count, size, color, speedMultiplier }) {
 
 export default function Background3D() {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#030712] select-none">
-      <Canvas gl={{ antialias: false, alpha: true }} camera={{ position: [0, 0, 3] }}>
+    <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden bg-[#030712] select-none">
+      <Canvas
+        className="pointer-events-none"
+        style={{ pointerEvents: "none" }}
+        gl={{ antialias: false, alpha: true }}
+        camera={{ position: [0, 0, 3] }}
+      >
         {/* Layer Partikel Kecil */}
         <ParticleGroup color="#818cf8" count={1500} size={0.015} speedMultiplier={1} />
         {/* Layer Partikel Sedang */}

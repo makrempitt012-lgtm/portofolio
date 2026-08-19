@@ -49,13 +49,29 @@ export default function Navbar() {
   const closeMenu = () => setIsOpen(false);
 
   const handleNavClick = (e, targetId) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setIsOpen(false); // Tutup dropdown mobile
 
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Jeda mikro agar transisi tutup dropdown selesai sebelum posisi target dihitung
+    setTimeout(() => {
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        if (targetId === "hero") {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          const navOffset = 80;
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+
+          window.scrollTo({
+            top: Math.max(0, offsetPosition),
+            behavior: "smooth",
+          });
+        }
+      } else if (targetId === "hero") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }, 120);
   };
 
   return (

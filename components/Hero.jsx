@@ -78,6 +78,24 @@ export default function Hero() {
   const { text: nameText, isFinished: isNameFinished } = useSingleTypewriter("Arsyah Khairizal", 120, 300);
   const typewriterText = useTypewriter(words, 80, 40, 2000, isNameFinished);
 
+  const handleScrollTo = (e, targetId) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      if (targetId === "hero") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const navOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
   return (
     <section
       id="hero"
@@ -176,8 +194,9 @@ export default function Hero() {
             className="flex flex-wrap gap-4"
           >
             <a
-              href="#contact"
-              className="group flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-glow-indigo hover:shadow-glow-purple transition-all duration-500 hover:scale-105"
+              href="#kontak"
+              onClick={(e) => handleScrollTo(e, "kontak")}
+              className="group flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-glow-indigo hover:shadow-glow-purple transition-all duration-500 hover:scale-105 cursor-pointer active:scale-95"
             >
               <Sparkles size={16} />
               Hire Me
@@ -187,8 +206,9 @@ export default function Hero() {
               />
             </a>
             <a
-              href="#projects"
-              className="group flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-slate-200 rounded-full border border-slate-700/80 backdrop-blur-xl bg-slate-900/30 hover:border-slate-500 hover:bg-slate-800/50 transition-all duration-500 hover:scale-105"
+              href="#proyek"
+              onClick={(e) => handleScrollTo(e, "proyek")}
+              className="group flex items-center gap-2 px-7 py-3.5 text-sm font-semibold text-slate-200 rounded-full border border-slate-700/80 backdrop-blur-xl bg-slate-900/30 hover:border-slate-500 hover:bg-slate-800/50 transition-all duration-500 hover:scale-105 cursor-pointer active:scale-95"
             >
               <Eye size={16} />
               Lihat Karya
