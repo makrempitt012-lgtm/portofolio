@@ -1,231 +1,407 @@
 "use client";
 
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
-  Layout, Server, Terminal, Globe, Shield, Smartphone, Code2,
-  Workflow, RefreshCw, Zap, Sparkles, Layers, Droplets, Waves,
-  Orbit, Move, Flame, Cpu, Database, Check
+  Layout,
+  Server,
+  Workflow,
+  Sparkles,
+  Database,
+  Code2,
+  Globe,
+  Cpu,
+  Move,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  CheckCircle2,
+  Layers,
+  Zap
 } from "lucide-react";
 import {
-  SiHtml5, SiCss, SiJavascript, SiTypescript,
-  SiReact, SiNextdotjs, SiTailwindcss, SiFramer,
-  SiNodedotjs, SiExpress, SiPostgresql, SiMongodb,
-  SiGithub, SiFigma, SiPostman, SiDocker, SiVercel,
-  SiLaravel, SiMysql, SiFirebase, SiWordpress,
-  SiSupabase, SiLinux
+  SiHtml5,
+  SiCss,
+  SiJavascript,
+  SiTypescript,
+  SiReact,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiFramer,
+  SiNodedotjs,
+  SiExpress,
+  SiPostgresql,
+  SiMysql,
+  SiWordpress,
+  SiSupabase,
+  SiLaravel,
+  SiDocker,
+  SiGithub,
+  SiFigma,
+  SiPostman,
+  SiVercel
 } from "react-icons/si";
 
-/* ─── Tech Stack List for Liquid Bubble Fusion ───────────────── */
-const ALL_SKILLS = [
-  // Frontend
-  { id: "react", name: "React.js", icon: SiReact, category: "frontend", color: "#61DAFB", glow: "rgba(97,218,251,0.5)", size: "lg", initialPos: { x: 22, y: 20 } },
-  { id: "next", name: "Next.js", icon: SiNextdotjs, category: "frontend", color: "#FFFFFF", glow: "rgba(255,255,255,0.4)", size: "lg", initialPos: { x: 42, y: 16 } },
-  { id: "ts", name: "TypeScript", icon: SiTypescript, category: "frontend", color: "#3178C6", glow: "rgba(49,120,198,0.5)", size: "lg", initialPos: { x: 62, y: 22 } },
-  { id: "tailwind", name: "Tailwind CSS", icon: SiTailwindcss, category: "frontend", color: "#38BDF8", glow: "rgba(56,189,248,0.5)", size: "lg", initialPos: { x: 80, y: 18 } },
-  { id: "js", name: "JavaScript", icon: SiJavascript, category: "frontend", color: "#F7DF1E", glow: "rgba(247,223,30,0.5)", size: "md", initialPos: { x: 12, y: 40 } },
-  { id: "framer", name: "Framer Motion", icon: SiFramer, category: "frontend", color: "#FF0055", glow: "rgba(255,0,85,0.5)", size: "md", initialPos: { x: 32, y: 38 } },
-  { id: "html", name: "HTML5", icon: SiHtml5, category: "frontend", color: "#E34F26", glow: "rgba(227,79,38,0.4)", size: "sm", initialPos: { x: 50, y: 34 } },
-  { id: "css", name: "CSS3", icon: SiCss, category: "frontend", color: "#1572B6", glow: "rgba(21,114,182,0.4)", size: "sm", initialPos: { x: 68, y: 40 } },
-  { id: "responsive", name: "Responsive UI", icon: Smartphone, category: "frontend", color: "#A855F7", glow: "rgba(168,85,247,0.4)", size: "sm", initialPos: { x: 86, y: 36 } },
+/* ─── Structured Skills Data ──────────────────────────────────── */
+const ALL_TECH = [
+  // Frontend Ring
+  { id: "react", name: "React.js", category: "frontend", tier: 0, icon: SiReact, color: "#61DAFB", glow: "rgba(97,218,251,0.5)" },
+  { id: "next", name: "Next.js", category: "frontend", tier: 0, icon: SiNextdotjs, color: "#FFFFFF", glow: "rgba(255,255,255,0.4)" },
+  { id: "ts", name: "TypeScript", category: "frontend", tier: 0, icon: SiTypescript, color: "#3178C6", glow: "rgba(49,120,198,0.5)" },
+  { id: "tailwind", name: "Tailwind CSS", category: "frontend", tier: 0, icon: SiTailwindcss, color: "#38BDF8", glow: "rgba(56,189,248,0.5)" },
+  { id: "framer", name: "Framer Motion", category: "frontend", tier: 0, icon: SiFramer, color: "#FF0055", glow: "rgba(255,0,85,0.5)" },
+  { id: "js", name: "JavaScript", category: "frontend", tier: 0, icon: SiJavascript, color: "#F7DF1E", glow: "rgba(247,223,30,0.5)" },
+  { id: "html", name: "HTML5", category: "frontend", tier: 0, icon: SiHtml5, color: "#E34F26", glow: "rgba(227,79,38,0.5)" },
+  { id: "css", name: "CSS3", category: "frontend", tier: 0, icon: SiCss, color: "#1572B6", glow: "rgba(21,114,182,0.5)" },
 
-  // Backend & CMS
-  { id: "node", name: "Node.js", icon: SiNodedotjs, category: "backend", color: "#339933", glow: "rgba(51,153,51,0.5)", size: "lg", initialPos: { x: 18, y: 58 } },
-  { id: "laravel", name: "Laravel", icon: SiLaravel, category: "backend", color: "#FF2D20", glow: "rgba(255,45,32,0.5)", size: "lg", initialPos: { x: 38, y: 54 } },
-  { id: "supabase", name: "Supabase", icon: SiSupabase, category: "backend", color: "#3ECF8E", glow: "rgba(62,207,142,0.5)", size: "lg", initialPos: { x: 58, y: 56 } },
-  { id: "express", name: "Express.js", icon: SiExpress, category: "backend", color: "#E5E7EB", glow: "rgba(229,231,235,0.4)", size: "md", initialPos: { x: 76, y: 54 } },
-  { id: "wordpress", name: "WordPress", icon: SiWordpress, category: "backend", color: "#21759B", glow: "rgba(33,117,155,0.4)", size: "md", initialPos: { x: 88, y: 68 } },
-  { id: "restapi", name: "RESTful API", icon: Globe, category: "backend", color: "#00D8FF", glow: "rgba(0,216,255,0.4)", size: "sm", initialPos: { x: 28, y: 72 } },
+  // Backend & Data Ring
+  { id: "node", name: "Node.js", category: "backend", tier: 1, icon: SiNodedotjs, color: "#339933", glow: "rgba(51,153,51,0.5)" },
+  { id: "express", name: "Express.js", category: "backend", tier: 1, icon: SiExpress, color: "#E5E7EB", glow: "rgba(229,231,235,0.4)" },
+  { id: "laravel", name: "Laravel", category: "backend", tier: 1, icon: SiLaravel, color: "#FF2D20", glow: "rgba(255,45,32,0.5)" },
+  { id: "wordpress", name: "WordPress", category: "backend", tier: 1, icon: SiWordpress, color: "#21759B", glow: "rgba(33,117,155,0.5)" },
+  { id: "supabase", name: "Supabase", category: "backend", tier: 1, icon: SiSupabase, color: "#3ECF8E", glow: "rgba(62,207,142,0.5)" },
+  { id: "mysql", name: "MySQL", category: "backend", tier: 1, icon: SiMysql, color: "#4479A1", glow: "rgba(68,121,161,0.5)" },
+  { id: "postgres", name: "PostgreSQL", category: "backend", tier: 1, icon: SiPostgresql, color: "#4169E1", glow: "rgba(65,105,225,0.5)" },
+  { id: "restapi", name: "RESTful API", category: "backend", tier: 1, icon: Globe, color: "#00D8FF", glow: "rgba(0,216,255,0.5)" },
 
-  // Database
-  { id: "postgres", name: "PostgreSQL", icon: SiPostgresql, category: "database", color: "#4169E1", glow: "rgba(65,105,225,0.5)", size: "md", initialPos: { x: 46, y: 72 } },
-  { id: "mongodb", name: "MongoDB", icon: SiMongodb, category: "database", color: "#47A248", glow: "rgba(71,162,72,0.4)", size: "md", initialPos: { x: 64, y: 74 } },
-  { id: "mysql", name: "MySQL", icon: SiMysql, category: "database", color: "#4479A1", glow: "rgba(68,121,161,0.4)", size: "md", initialPos: { x: 12, y: 78 } },
-  { id: "firebase", name: "Firebase", icon: SiFirebase, category: "database", color: "#FFCA28", glow: "rgba(255,202,40,0.4)", size: "sm", initialPos: { x: 80, y: 78 } },
-
-  // Tools & DevOps
-  { id: "docker", name: "Docker", icon: SiDocker, category: "tools", color: "#2496ED", glow: "rgba(36,150,237,0.5)", size: "md", initialPos: { x: 24, y: 88 } },
-  { id: "git", name: "Git & GitHub", icon: SiGithub, category: "tools", color: "#F05032", glow: "rgba(240,80,50,0.4)", size: "md", initialPos: { x: 42, y: 88 } },
-  { id: "figma", name: "Figma", icon: SiFigma, category: "tools", color: "#F24E1E", glow: "rgba(242,78,30,0.4)", size: "md", initialPos: { x: 60, y: 88 } },
-  { id: "postman", name: "Postman", icon: SiPostman, category: "tools", color: "#FF6C37", glow: "rgba(255,108,55,0.4)", size: "sm", initialPos: { x: 74, y: 88 } },
-  { id: "vercel", name: "Vercel", icon: SiVercel, category: "tools", color: "#FFFFFF", glow: "rgba(255,255,255,0.3)", size: "sm", initialPos: { x: 88, y: 88 } },
-  { id: "linux", name: "Linux / Bash", icon: SiLinux, category: "tools", color: "#FCC624", glow: "rgba(252,198,36,0.4)", size: "sm", initialPos: { x: 8, y: 92 } },
+  // Ecosystem & DevOps Ring
+  { id: "git", name: "Git & GitHub", category: "tools", tier: 2, icon: SiGithub, color: "#F05032", glow: "rgba(240,80,50,0.5)" },
+  { id: "docker", name: "Docker", category: "tools", tier: 2, icon: SiDocker, color: "#2496ED", glow: "rgba(36,150,237,0.5)" },
+  { id: "postman", name: "Postman", category: "tools", tier: 2, icon: SiPostman, color: "#FF6C37", glow: "rgba(255,108,55,0.5)" },
+  { id: "figma", name: "Figma", category: "tools", tier: 2, icon: SiFigma, color: "#F24E1E", glow: "rgba(242,78,30,0.5)" },
+  { id: "vercel", name: "Vercel", category: "tools", tier: 2, icon: SiVercel, color: "#FFFFFF", glow: "rgba(255,255,255,0.4)" },
+  { id: "vscode", name: "VS Code", category: "tools", tier: 2, icon: Code2, color: "#007ACC", glow: "rgba(0,122,204,0.5)" },
 ];
 
 const CATEGORIES = [
-  { id: "all", label: "Semua Bubble", icon: Droplets, count: ALL_SKILLS.length },
-  { id: "frontend", label: "Frontend & UI", icon: Layout, count: ALL_SKILLS.filter(s => s.category === "frontend").length },
-  { id: "backend", label: "Backend & CMS", icon: Server, count: ALL_SKILLS.filter(s => s.category === "backend").length },
-  { id: "database", label: "Database & Cloud", icon: Database, count: ALL_SKILLS.filter(s => s.category === "database").length },
-  { id: "tools", label: "Tools & DevOps", icon: Workflow, count: ALL_SKILLS.filter(s => s.category === "tools").length },
+  { id: "all", label: "All Stack", icon: Layers },
+  { id: "frontend", label: "Frontend", icon: Layout },
+  { id: "backend", label: "Backend & Data", icon: Server },
+  { id: "tools", label: "DevOps & Tools", icon: Workflow },
 ];
 
-/* ─── Individual Liquid Bubble Component ─────────────────────── */
-function LiquidBubble({ skill, index, activeCategory, arenaRef, isAgitated, isMerged }) {
-  const Icon = skill.icon;
-  const isFiltered = activeCategory === "all" || skill.category === activeCategory;
+/* ─── 1. Desktop 3D Holographic Cylinder Tunnel ──────────────── */
+function HolographicCylinderTunnel({ activeCategory }) {
+  const [rotY, setRotY] = useState(0);
+  const [rotX, setRotX] = useState(-8);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hoveredSkill, setHoveredSkill] = useState(null);
 
-  // Random floating oscillation offsets & duration
-  const floatDuration = 4 + (index % 5) * 0.8;
-  const floatDelay = (index % 7) * 0.3;
-  const floatRangeX = (index % 2 === 0 ? 1 : -1) * (10 + (index % 3) * 6);
-  const floatRangeY = (index % 3 === 0 ? -1 : 1) * (12 + (index % 4) * 5);
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const lastPosRef = useRef({ x: 0, y: 0 });
+  const animFrameRef = useRef(null);
 
-  // Position calculations based on state (normal float vs merged center vs agitated)
-  const targetX = isMerged
-    ? "50%"
-    : `${skill.initialPos.x}%`;
-  const targetY = isMerged
-    ? "50%"
-    : `${skill.initialPos.y}%`;
+  // Physics animation loop with momentum damping
+  useEffect(() => {
+    let lastTime = performance.now();
+
+    const updatePhysics = (time) => {
+      const delta = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      if (!isDragging) {
+        // Auto-rotation + inertia deceleration
+        setRotY((prev) => (prev + 12 * delta + velocityRef.current.x) % 360);
+        setRotX((prev) => {
+          const targetX = -8 + Math.sin(time * 0.001) * 3;
+          return prev + (targetX - prev) * 0.05 + velocityRef.current.y;
+        });
+
+        // Friction damping
+        velocityRef.current.x *= 0.94;
+        velocityRef.current.y *= 0.94;
+      }
+
+      animFrameRef.current = requestAnimationFrame(updatePhysics);
+    };
+
+    animFrameRef.current = requestAnimationFrame(updatePhysics);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [isDragging]);
+
+  const handlePointerDown = (e) => {
+    setIsDragging(true);
+    lastPosRef.current = { x: e.clientX, y: e.clientY };
+    velocityRef.current = { x: 0, y: 0 };
+  };
+
+  const handlePointerMove = useCallback(
+    (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - lastPosRef.current.x;
+      const dy = e.clientY - lastPosRef.current.y;
+      lastPosRef.current = { x: e.clientX, y: e.clientY };
+
+      const factorX = 0.35;
+      const factorY = 0.2;
+
+      setRotY((prev) => prev + dx * factorX);
+      setRotX((prev) => Math.max(-30, Math.min(25, prev - dy * factorY)));
+
+      velocityRef.current = { x: dx * 0.25, y: -dy * 0.15 };
+    },
+    [isDragging]
+  );
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
+      return () => {
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+      };
+    }
+  }, [isDragging, handlePointerMove]);
+
+  // Cylinder radius and ring spacing
+  const radius = 390; // Cylinder distance from center
 
   return (
-    <motion.div
-      drag
-      dragConstraints={arenaRef}
-      dragElastic={0.3}
-      whileHover={{ scale: 1.15, zIndex: 40 }}
-      whileDrag={{ scale: 1.25, zIndex: 50, cursor: "grabbing" }}
-      initial={{
-        opacity: 0,
-        scale: 0.6,
-        left: `${skill.initialPos.x}%`,
-        top: `${skill.initialPos.y}%`,
-      }}
-      animate={{
-        opacity: isFiltered ? 1 : 0.25,
-        scale: isFiltered ? 1 : 0.85,
-        left: targetX,
-        top: targetY,
-        x: isMerged ? 0 : [0, floatRangeX, -floatRangeX * 0.7, 0],
-        y: isMerged ? 0 : [0, floatRangeY, -floatRangeY * 0.8, 0],
-        rotate: isMerged ? 0 : [0, (index % 2 === 0 ? 3 : -3), 0],
-      }}
-      transition={{
-        opacity: { duration: 0.4 },
-        scale: { duration: 0.4 },
-        left: { type: "spring", stiffness: 120, damping: 18 },
-        top: { type: "spring", stiffness: 120, damping: 18 },
-        x: {
-          repeat: Infinity,
-          duration: isAgitated ? floatDuration * 0.4 : floatDuration,
-          delay: floatDelay,
-          ease: "easeInOut",
-        },
-        y: {
-          repeat: Infinity,
-          duration: isAgitated ? (floatDuration + 0.5) * 0.4 : floatDuration + 0.5,
-          delay: floatDelay,
-          ease: "easeInOut",
-        },
-        rotate: {
-          repeat: Infinity,
-          duration: floatDuration * 1.5,
-          ease: "easeInOut",
-        },
-      }}
-      style={{
-        position: "absolute",
-        transformOrigin: "center center",
-        transform: "translate(-50%, -50%)",
-      }}
-      className={`group cursor-grab active:cursor-grabbing select-none transform-gpu transition-filter duration-300 ${
-        !isFiltered ? "grayscale pointer-events-none" : ""
-      }`}
-    >
-      {/* ── 1. Liquid Goo Fusion Background (Participates in SVG Metaball merge) ── */}
-      <div
-        style={{
-          boxShadow: `0 0 28px -2px ${skill.glow}, 0 0 12px 2px rgba(168,85,247,0.35)`,
-        }}
-        className="absolute inset-[-4px] rounded-full bg-gradient-to-tr from-indigo-600/70 via-purple-600/60 to-pink-600/50 blur-[2px] opacity-80 group-hover:opacity-100 group-hover:blur-0 transition-all duration-300 pointer-events-none"
-      />
+    <div className="relative w-full h-[580px] lg:h-[620px] flex flex-col items-center justify-center select-none overflow-hidden rounded-3xl bg-slate-950/70 border border-slate-800/80 shadow-[0_0_60px_-15px_rgba(99,102,241,0.2)] backdrop-blur-2xl">
+      {/* Subtle Background Grid & Central Glowing Core */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+      <div className="absolute w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-pink-600/10 blur-3xl pointer-events-none -z-10" />
 
-      {/* ── 2. Glassmorphism Foreground Bubble Surface ── */}
-      <div className="relative flex items-center justify-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-full bg-slate-900/80 border border-indigo-400/40 backdrop-blur-xl text-white shadow-xl shadow-purple-950/40 group-hover:border-purple-300/80 group-hover:bg-indigo-950/80 transition-all duration-300 whitespace-nowrap">
-        {/* Subtle Liquid Inner Specular Sheen */}
-        <div className="absolute top-1 left-3 right-3 h-2 rounded-full bg-gradient-to-b from-white/30 to-transparent pointer-events-none" />
-
-        {/* Icon */}
-        <Icon
-          size={18}
-          style={{ color: skill.color }}
-          className="shrink-0 transition-transform duration-300 group-hover:scale-120 group-hover:rotate-12"
-        />
-
-        {/* Tech Label */}
-        <span className="text-xs sm:text-sm font-semibold tracking-wide text-slate-100 group-hover:text-white drop-shadow-sm">
-          {skill.name}
+      {/* Central Holographic Nexus Core */}
+      <div className="absolute pointer-events-none flex flex-col items-center justify-center z-0">
+        <div className="w-28 h-28 rounded-full border border-indigo-500/20 bg-indigo-950/20 backdrop-blur-md flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.2)] animate-pulse">
+          <Cpu size={36} className="text-indigo-400/80" />
+        </div>
+        <span className="text-[10px] font-mono text-indigo-300 mt-2 tracking-widest uppercase opacity-75">
+          Neural Core
         </span>
-
-        {/* Interactive Pulse Dot */}
-        <span
-          style={{ backgroundColor: skill.color }}
-          className="w-1.5 h-1.5 rounded-full opacity-70 group-hover:opacity-100 group-hover:scale-125 transition-all"
-        />
       </div>
-    </motion.div>
+
+      {/* 3D Perspective Viewport */}
+      <div
+        onPointerDown={handlePointerDown}
+        className="relative w-full h-full [perspective:1100px] flex items-center justify-center cursor-grab active:cursor-grabbing touch-none z-10"
+      >
+        {/* Rotating Cylinder Container */}
+        <div
+          style={{
+            transform: `rotateX(${rotX}deg) rotateY(${rotY}deg)`,
+            transformStyle: "preserve-3d",
+          }}
+          className="relative w-0 h-0 transform-gpu will-change-transform"
+        >
+          {ALL_TECH.map((skill, index) => {
+            const Icon = skill.icon;
+            const isMatch = activeCategory === "all" || skill.category === activeCategory;
+
+            // Compute 3D cylinder cylindrical coordinates
+            // 3 vertical tiers with staggered angle offset
+            const tierCount = skill.tier === 0 ? 8 : skill.tier === 1 ? 8 : 6;
+            const tierIndex = skill.tier === 0 ? index : skill.tier === 1 ? index - 8 : index - 16;
+            const angleStep = 360 / tierCount;
+            const angleOffset = skill.tier === 1 ? 22.5 : skill.tier === 2 ? 30 : 0;
+            const angle = tierIndex * angleStep + angleOffset;
+
+            const yOffset = skill.tier === 0 ? -95 : skill.tier === 1 ? 0 : 95;
+
+            return (
+              <div
+                key={skill.id}
+                onMouseEnter={() => setHoveredSkill(skill)}
+                onMouseLeave={() => setHoveredSkill(null)}
+                style={{
+                  transform: `rotateY(${angle}deg) translateZ(${radius}px) translateY(${yOffset}px)`,
+                  transformStyle: "preserve-3d",
+                  opacity: isMatch ? 1 : 0.22,
+                }}
+                className={`absolute -left-[75px] -top-[24px] w-[150px] h-[48px] rounded-2xl backdrop-blur-xl border transition-all duration-300 transform-gpu flex items-center gap-2.5 px-3.5 shadow-lg group cursor-pointer ${
+                  isMatch
+                    ? "bg-slate-900/85 border-slate-700/80 hover:border-indigo-400/80 hover:bg-slate-850 hover:scale-115 hover:shadow-[0_0_25px_rgba(99,102,241,0.5)]"
+                    : "bg-slate-950/60 border-slate-800/40 pointer-events-none"
+                }`}
+              >
+                {/* Face Holographic Sheen */}
+                <div
+                  style={{
+                    boxShadow: isMatch ? `inset 0 1px 1px 0 rgba(255,255,255,0.15)` : "none",
+                  }}
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                />
+
+                <Icon
+                  size={20}
+                  style={{ color: skill.color }}
+                  className="shrink-0 transition-transform duration-200 group-hover:scale-120 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+                />
+
+                <span className="text-xs font-semibold text-slate-100 group-hover:text-white tracking-wide truncate">
+                  {skill.name}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bottom Floating Status Bar */}
+      <div className="absolute bottom-4 inset-x-6 z-20 flex items-center justify-between pointer-events-none">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-[11px] font-medium text-slate-300 backdrop-blur-md shadow-md">
+          <Move size={13} className="text-indigo-400 animate-pulse" />
+          <span>Drag 360° untuk navigasi silinder spasial</span>
+        </div>
+
+        {hoveredSkill && (
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-500/50 text-xs font-bold text-white backdrop-blur-md shadow-lg shadow-indigo-500/20">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{hoveredSkill.name} ({hoveredSkill.category.toUpperCase()})</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── 2. Mobile 3D Touch Arc Carousel Sub-component ─────────── */
+function MobileArcCarousel({ activeCategory }) {
+  const filteredSkills = ALL_TECH.filter(
+    (s) => activeCategory === "all" || s.category === activeCategory
+  );
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const nextSkill = () => {
+    setActiveIndex((prev) => (prev + 1) % filteredSkills.length);
+  };
+
+  const prevSkill = () => {
+    setActiveIndex((prev) => (prev - 1 + filteredSkills.length) % filteredSkills.length);
+  };
+
+  const currentSkill = filteredSkills[activeIndex] || filteredSkills[0];
+
+  return (
+    <div className="w-full select-none">
+      {/* 3D Arc Stage */}
+      <div className="relative w-full h-[320px] flex items-center justify-center [perspective:1000px] overflow-hidden py-4">
+        <AnimatePresence mode="popLayout">
+          {filteredSkills.map((skill, index) => {
+            const offset = index - activeIndex;
+            const isCenter = offset === 0;
+
+            // Only render adjacent cards for optimal mobile performance
+            if (Math.abs(offset) > 2) return null;
+
+            const Icon = skill.icon;
+
+            return (
+              <motion.div
+                key={skill.id}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.4}
+                onDragEnd={(e, { offset: dragOffset }) => {
+                  if (dragOffset.x < -40) nextSkill();
+                  if (dragOffset.x > 40) prevSkill();
+                }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  x: offset * 110,
+                  z: -Math.abs(offset) * 60,
+                  rotateY: offset * -20,
+                  scale: isCenter ? 1 : 0.82,
+                  opacity: isCenter ? 1 : 0.45,
+                  zIndex: 20 - Math.abs(offset) * 5,
+                }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                transition={{ type: "spring", stiffness: 300, damping: 26 }}
+                onClick={() => setActiveIndex(index)}
+                style={{
+                  transformStyle: "preserve-3d",
+                }}
+                className={`absolute w-[180px] h-[220px] rounded-3xl p-5 flex flex-col justify-between backdrop-blur-2xl border transition-colors shadow-2xl cursor-pointer ${
+                  isCenter
+                    ? "bg-slate-900/90 border-indigo-500/60 shadow-[0_15px_35px_-10px_rgba(99,102,241,0.4)]"
+                    : "bg-slate-950/75 border-slate-800/80"
+                }`}
+              >
+                {/* Header tag */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono uppercase">
+                    {skill.category}
+                  </span>
+                  {isCenter && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  )}
+                </div>
+
+                {/* Center Icon */}
+                <div className="flex flex-col items-center justify-center my-auto">
+                  <div
+                    style={{
+                      boxShadow: isCenter ? `0 0 25px ${skill.glow}` : "none",
+                    }}
+                    className="w-16 h-16 rounded-2xl bg-slate-850/80 border border-slate-700/60 flex items-center justify-center mb-3"
+                  >
+                    <Icon size={34} style={{ color: skill.color }} />
+                  </div>
+                  <h3 className="text-base font-bold text-white text-center leading-tight">
+                    {skill.name}
+                  </h3>
+                </div>
+
+                {/* Footer */}
+                <div className="text-center">
+                  <span className="text-[10px] text-indigo-300 font-medium">
+                    {isCenter ? "Production Ready" : "Swipe & Tap"}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Mobile Navigation Dock */}
+      <div className="flex items-center justify-between gap-3 px-4 mt-2">
+        <button
+          onClick={prevSkill}
+          className="w-10 h-10 rounded-2xl bg-slate-900/90 border border-slate-700 text-slate-300 flex items-center justify-center active:scale-95 shadow-md"
+        >
+          <ChevronLeft size={18} />
+        </button>
+
+        {/* Counter & Progress */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono font-bold text-indigo-400">
+            {String(activeIndex + 1).padStart(2, "0")} / {String(filteredSkills.length).padStart(2, "0")}
+          </span>
+          <span className="text-xs text-slate-400">&bull; {currentSkill?.name}</span>
+        </div>
+
+        <button
+          onClick={nextSkill}
+          className="w-10 h-10 rounded-2xl bg-slate-900/90 border border-slate-700 text-slate-300 flex items-center justify-center active:scale-95 shadow-md"
+        >
+          <ChevronRight size={18} />
+        </button>
+      </div>
+    </div>
   );
 }
 
 /* ─── Main Skills Component ───────────────────────────────────── */
 export default function Skills() {
   const sectionRef = useRef(null);
-  const arenaRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
-
   const [activeCategory, setActiveCategory] = useState("all");
-  const [viewMode, setViewMode] = useState("liquid"); // "liquid" | "bento"
-  const [isAgitated, setIsAgitated] = useState(false);
-  const [isMerged, setIsMerged] = useState(false);
-
-  // Trigger liquid agitation / wave pulse
-  const handleAgitate = () => {
-    setIsAgitated(true);
-    setTimeout(() => setIsAgitated(false), 2400);
-  };
-
-  // Toggle Mega Fusion Core
-  const handleToggleMerge = () => {
-    setIsMerged((prev) => !prev);
-  };
-
-  // Reset Bubbles position
-  const handleResetBubbles = () => {
-    setIsMerged(false);
-    setIsAgitated(true);
-    setTimeout(() => setIsAgitated(false), 1200);
-  };
 
   return (
     <section id="skills" className="relative py-14 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" ref={sectionRef}>
-      {/* ── Global SVG Metaball Liquid Fusion Filter ──────────── */}
-      <svg className="absolute w-0 h-0 pointer-events-none opacity-0" aria-hidden="true">
-        <defs>
-          <filter id="liquid-fusion" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-            {/* 1. Blur edges */}
-            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
-            {/* 2. Alpha threshold contrast to create liquid bridge */}
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  
-                      0 1 0 0 0  
-                      0 0 1 0 0  
-                      0 0 0 24 -10"
-              result="liquid"
-            />
-            {/* 3. Blend back graphic */}
-            <feBlend in="SourceGraphic" in2="liquid" mode="normal" />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Section Divider with Glow */}
       <div className="section-divider max-w-4xl mx-auto mb-20" />
 
       {/* Cyber Ambient Background Glows */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-pink-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-pink-600/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto">
         {/* ── Section Header ──────────────────────────────────── */}
@@ -237,218 +413,54 @@ export default function Skills() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-purple-500/30 text-xs font-semibold text-purple-300 uppercase tracking-widest mb-4 shadow-[0_0_20px_-5px_rgba(168,85,247,0.3)]">
             <Sparkles size={13} className="text-purple-400 animate-pulse" />
-            <span>Liquid / Bubble Fusion</span>
+            <span>Holographic Spatial Architecture</span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-4 text-white tracking-tight">
-            Metaball <span className="gradient-text">Tech Stack</span> Fusion
+            3D Holographic <span className="gradient-text">Cylinder Tunnel</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base leading-relaxed text-slate-300 max-w-2xl mx-auto">
-            Setiap teknologi direpresentasikan sebagai cairan gelembung organik (*metaball blobs*).
-            <span className="text-purple-300 font-medium"> Dekatkan atau seret bubble satu sama lain untuk melihat fusi cairan elastis!</span>
+            Jelajahi seluruh ekosistem keahlian teknologi dalam struktur silinder 3D interaktif 360°.
+            <span className="text-indigo-300 font-medium"> Geser kursor untuk memutar atau pilih kategori filter di bawah!</span>
           </p>
         </motion.div>
 
-        {/* ── Interactive Toolbar & Category Filter Bar ─────────── */}
+        {/* ── Category Filter Pills Bar ─────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6 backdrop-blur-xl bg-slate-900/60 border border-slate-800/90 rounded-2xl p-3 sm:p-4 shadow-xl"
+          className="flex items-center justify-center gap-2 mb-8 flex-wrap"
         >
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 w-full lg:w-auto">
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-300 cursor-pointer select-none ${
-                    isActive
-                      ? "bg-gradient-to-r from-indigo-600/90 to-purple-600/90 text-white shadow-[0_0_20px_-5px_rgba(99,102,241,0.5)] border border-indigo-400/40"
-                      : "bg-slate-800/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 border border-slate-700/50"
-                  }`}
-                >
-                  <Icon size={13} className={isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"} />
-                  <span>{cat.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? "bg-white/20 text-white" : "bg-slate-700/60 text-slate-400"}`}>
-                    {cat.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Interactive Liquid Actions & View Switcher */}
-          <div className="flex items-center gap-2 w-full lg:w-auto justify-center sm:justify-end flex-wrap">
-            {viewMode === "liquid" && (
-              <>
-                <button
-                  onClick={handleAgitate}
-                  title="Guncang / Aduk cairan metaball"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
-                >
-                  <Waves size={13} className="text-purple-400" />
-                  <span>Aduk Cairan</span>
-                </button>
-
-                <button
-                  onClick={handleToggleMerge}
-                  title={isMerged ? "Pencarkan kembali bubble" : "Satukan seluruh bubble ke pusat fusi"}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm cursor-pointer ${
-                    isMerged
-                      ? "bg-pink-500/25 text-pink-200 border-pink-400/60 shadow-[0_0_15px_rgba(236,72,153,0.4)]"
-                      : "bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
-                  }`}
-                >
-                  <Orbit size={13} className={isMerged ? "text-pink-300 animate-spin" : "text-indigo-400"} />
-                  <span>{isMerged ? "Pencarkan Fusi" : "Mega Fusi"}</span>
-                </button>
-
-                <button
-                  onClick={handleResetBubbles}
-                  title="Kembalikan posisi asal bubble"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
-                >
-                  <RefreshCw size={13} className="text-slate-400 hover:rotate-180 transition-transform duration-500" />
-                  <span>Reset</span>
-                </button>
-              </>
-            )}
-
-            {/* View Switcher: Liquid Arena vs Bento Matrix */}
-            <div className="flex items-center bg-slate-800/80 rounded-xl p-0.5 border border-slate-700/70 ml-1">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = activeCategory === cat.id;
+            return (
               <button
-                onClick={() => setViewMode("liquid")}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  viewMode === "liquid"
-                    ? "bg-indigo-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-semibold transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-[0_0_20px_-5px_rgba(99,102,241,0.5)] border border-indigo-400/50 scale-105"
+                    : "bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 border border-slate-800"
                 }`}
               >
-                <Droplets size={12} />
-                <span className="hidden sm:inline">Liquid Fusion</span>
-                <span className="sm:hidden">Liquid</span>
+                <Icon size={14} />
+                <span>{cat.label}</span>
               </button>
-              <button
-                onClick={() => setViewMode("bento")}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  viewMode === "bento"
-                    ? "bg-indigo-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Layout size={12} />
-                <span className="hidden sm:inline">Bento Matrix</span>
-                <span className="sm:hidden">Bento</span>
-              </button>
-            </div>
-          </div>
+            );
+          })}
         </motion.div>
 
-        {/* ── View 1: Liquid / Bubble Fusion Arena ─────────────── */}
-        {viewMode === "liquid" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-            className="relative"
-          >
-            {/* Arena Container */}
-            <div
-              ref={arenaRef}
-              className="relative w-full h-[540px] sm:h-[620px] md:h-[680px] rounded-3xl overflow-hidden backdrop-blur-2xl bg-slate-950/80 border border-slate-800/90 shadow-[0_0_60px_-15px_rgba(99,102,241,0.25)] select-none"
-            >
-              {/* Subtle Cyber Background Ambient Grid & Radial Glows */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* ── 1. DESKTOP VIEWPORT (>= md): Interactive 3D Cylinder Tunnel ── */}
+        <div className="hidden md:block">
+          <HolographicCylinderTunnel activeCategory={activeCategory} />
+        </div>
 
-              {/* Watermark Hint */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 pointer-events-none flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/60 border border-slate-800/80 text-[11px] font-medium text-slate-400 backdrop-blur-md z-10 shadow-sm">
-                <Move size={13} className="text-purple-400 animate-pulse" />
-                <span>Geser bubble mendekat ke bubble lain untuk efek fusi cairan metaball</span>
-              </div>
-
-              {/* Liquid Metaball Filter Fusion Container */}
-              <div
-                style={{
-                  filter: "url(#liquid-fusion)",
-                }}
-                className="absolute inset-0 w-full h-full overflow-hidden"
-              >
-                {ALL_SKILLS.map((skill, index) => (
-                  <LiquidBubble
-                    key={skill.id}
-                    skill={skill}
-                    index={index}
-                    activeCategory={activeCategory}
-                    arenaRef={arenaRef}
-                    isAgitated={isAgitated}
-                    isMerged={isMerged}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── View 2: Structured Bento Matrix Overview ─────────── */}
-        {viewMode === "bento" && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
-          >
-            {CATEGORIES.filter(c => c.id !== "all").map((category) => {
-              const CategoryIcon = category.icon;
-              const categorySkills = ALL_SKILLS.filter(s => s.category === category.id);
-
-              return (
-                <div
-                  key={category.id}
-                  className="backdrop-blur-xl bg-slate-900/70 border border-slate-800/90 rounded-3xl p-5 sm:p-6 flex flex-col justify-between hover:border-indigo-500/40 hover:shadow-[0_0_35px_-10px_rgba(99,102,241,0.25)] transition-all duration-300 group"
-                >
-                  <div>
-                    {/* Header */}
-                    <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-800/80">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/25 transition-all">
-                        <CategoryIcon size={17} />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-white tracking-wide">{category.label}</h3>
-                        <p className="text-[11px] text-slate-400">{categorySkills.length} Teknologi Terdaftar</p>
-                      </div>
-                    </div>
-
-                    {/* Skill Badges List */}
-                    <div className="flex flex-wrap gap-2">
-                      {categorySkills.map((skill) => {
-                        const Icon = skill.icon;
-                        return (
-                          <div
-                            key={skill.id}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/70 border border-slate-700/60 text-slate-300 text-xs font-medium hover:border-purple-500/50 hover:text-white transition-all hover:scale-105"
-                          >
-                            <Icon size={13} style={{ color: skill.color }} />
-                            <span>{skill.name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-3 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
-                    <span>Tingkat Penguasaan</span>
-                    <span className="font-semibold text-emerald-400">Production Ready</span>
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
-        )}
+        {/* ── 2. MOBILE VIEWPORT (< md): 3D Touch Arc Carousel ── */}
+        <div className="block md:hidden">
+          <MobileArcCarousel key={activeCategory} activeCategory={activeCategory} />
+        </div>
       </div>
     </section>
   );
