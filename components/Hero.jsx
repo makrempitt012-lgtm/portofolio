@@ -15,7 +15,6 @@ const words = [
 
 function useSingleTypewriter(text, typingSpeed = 100, startDelay = 500) {
   const [displayedText, setDisplayedText] = useState("");
-  const [isFinished, setIsFinished] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
@@ -31,10 +30,10 @@ function useSingleTypewriter(text, typingSpeed = 100, startDelay = 500) {
         setDisplayedText(text.substring(0, displayedText.length + 1));
       }, typingSpeed);
       return () => clearTimeout(timer);
-    } else {
-      setIsFinished(true);
     }
   }, [displayedText, hasStarted, text, typingSpeed]);
+
+  const isFinished = hasStarted && displayedText.length >= text.length;
 
   return { text: displayedText, isFinished };
 }
@@ -150,7 +149,7 @@ export default function Hero() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-4 min-h-[3rem] lg:min-h-[4.5rem] flex flex-wrap items-center tracking-tight"
           >
-            <span className="text-indigo-400 font-mono font-bold mr-3 opacity-80">//</span>
+            <span className="text-indigo-400 font-mono font-bold mr-3 opacity-80">{"//"}</span>
             <span className="bg-gradient-to-r from-white via-slate-100 to-indigo-200 bg-clip-text text-transparent">
               {nameText}
             </span>
